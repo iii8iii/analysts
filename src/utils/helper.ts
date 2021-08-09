@@ -23,7 +23,7 @@ export const trendUp = (arr: number[], xs = 2) => {
       }
     }
   }
-  return { up: pre, deep };
+  return { isUp: pre, deep };
 };
 
 export function cross(
