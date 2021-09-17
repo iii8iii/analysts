@@ -1,4 +1,4 @@
-import { trendUp } from "../src/utils/helper";
+import { trendUp } from '../src/utils/helper';
 describe('analysts', () => {
   it('up', async () => {
     const data = [1, 2, 3, 4, 5, 6];

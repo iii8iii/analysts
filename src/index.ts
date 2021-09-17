@@ -1,9 +1,8 @@
 import { trendUp, cross, above } from './utils/helper';
 import { macd, boll, kdj, ma } from './utils/jstock';
-import { klineData } from "@iii8iii/dfcfbot/dist/types";
+import { klineData } from '@iii8iii/dfcfbot/dist/types';
 import { takeRight, last } from 'lodash';
 import { fangxiang } from './types';
-
 
 /**
  * 获取MACD值的变化趋势，可以在trend中设置方向UP或是DOWN
@@ -31,7 +30,7 @@ export function macdTrend(data: klineData, trend: fangxiang = 'UP'): boolean {
   });
 
   // 求出这些点收盘价的macd,其中最后一个是当前的macd(bar)
-  let barTends: { m: number; up: boolean; deep: number; }[] = [];
+  let barTends: { m: number; up: boolean; deep: number }[] = [];
   highEqNow.forEach(v => {
     const { bar } = macd(v, 12, 26, 9);
     const m = Number(last(bar));
@@ -59,7 +58,6 @@ export function macdTrend(data: klineData, trend: fangxiang = 'UP'): boolean {
       return !!up;
   }
 }
-
 
 /**
  * kdj 死叉后J线开始上挑, 金叉后5个单元以内被认为是上升
@@ -93,7 +91,6 @@ export function kdjTrend(data: klineData, trend: fangxiang = 'UP'): boolean {
   }
 }
 
-
 /**
  * 布木线的中间值连线上升大于5个单元并且上下张的开口在扩大则认为会上升
  * @param {klineData} data
@@ -122,7 +119,6 @@ export function bollTrend(data: klineData, trend: fangxiang = 'UP'): boolean {
   }
 }
 
-
 /**
  * 以长期无线来判断大体趋势，以忽略价格波动对趋势的判断
  * 默认50个单位（5分钟/日/周/月，取决于传入的数据）均线判断股票是否在上升趋势，且60个单位内最低价位于无线上方
@@ -130,7 +126,11 @@ export function bollTrend(data: klineData, trend: fangxiang = 'UP'): boolean {
  * @param {number} [zq=50]
  * @return {*}  {boolean}
  */
-export function maTrendUp(data: klineData, mazq: number = 50, aboveZq: number = 9): boolean {
+export function maTrendUp(
+  data: klineData,
+  mazq: number = 50,
+  aboveZq: number = 9
+): boolean {
   let { close, low } = data;
   let maArr = ma(close, mazq);
   const { isUp, deep } = trendUp(maArr);
