@@ -11,16 +11,17 @@ export const trendUp = (arr: number[], xs = 2) => {
   let first = true;
   let pre = false;
   let deep = 0;
-  for (let i = arr.length - 1; i > 1; i--) {
+  for (let i = arr.length - 1; i > 0; i--) {
     if (first) {
       pre = arr[i] > arr[i - 1];
+      deep = 1;
       first = false;
     } else {
       const cur = arr[i] > arr[i - 1];
       if (cur === !pre) {
-        deep = arr.length - i;
         break;
       }
+      deep = deep + 1;
     }
   }
   return { isUp: pre, deep };
