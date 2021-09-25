@@ -8,14 +8,16 @@ import { map, takeRight, last } from 'lodash';
 const qxs = (number: number, num: number) =>
   Number(String(number).replace(new RegExp(`^(.*\\..{${num}}).*$`), '$1'));
 
-
 /**
  * 趋势判断，将数组最后一位与第倒数第二位相减得出一个趋势，连续进行循环操作，直到趋势反转就停止
  * @param {number[]} arr 要判断的数组
  * @param {number} [xs=3] 对数组内容做取小数处理以忽略一些细微的变动
  * @return {*}  {{ isUp: boolean, deep: number, }} 趋势是否向上，以及这个趋势的连续次数
  */
-export function trendUp(arr: number[], xs = 3): { isUp: boolean, deep: number, } {
+export function trendUp(
+  arr: number[],
+  xs = 3
+): { isUp: boolean; deep: number } {
   arr = map(arr, o => qxs(o, xs));
 
   let first = true;
@@ -35,8 +37,7 @@ export function trendUp(arr: number[], xs = 3): { isUp: boolean, deep: number, }
     }
   }
   return { isUp: pre, deep };
-};
-
+}
 
 /**
  * 确认两条线是否有交点，从右向左查询，直到查询到一个交点就停止。在没有upwards时只判断有没有交点，有upwards时要有交点且方向与upwards相同才为真
@@ -85,7 +86,6 @@ export function cross(
     return false;
   }
 }
-
 
 /**
  * 判断A是不是在B的上面，如果有交点就返回否，没有交点就判断A的最后一个值是不是大于B的最后一个值

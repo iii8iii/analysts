@@ -11,7 +11,11 @@ import { fangxiang } from './types';
  * @param {number} [dp=3] 最终趋势连续最小次数
  * @return {*}  {boolean}
  */
-export function macdTrend(data: klineData, trend: fangxiang = 'UP', dp: number = 3): boolean {
+export function macdTrend(
+  data: klineData,
+  trend: fangxiang = 'UP',
+  dp: number = 3
+): boolean {
   let { close } = data;
   close = takeRight(close, 300);
   const { bar } = macd(close, 12, 26, 9);
@@ -65,7 +69,11 @@ export function kdjTrend(data: klineData, trend: fangxiang = 'UP'): boolean {
  * @param {number} [dp=4] 中线连续上升的次数
  * @return {*}  {boolean}
  */
-export function bollTrend(data: klineData, trend: fangxiang = 'UP', dp: number = 4): boolean {
+export function bollTrend(
+  data: klineData,
+  trend: fangxiang = 'UP',
+  dp: number = 4
+): boolean {
   let { close } = data;
   close = takeRight(close, 300);
   const { mb, up, bn } = boll(close, 20); //{中，高，低}
@@ -110,4 +118,4 @@ export function maTrendUp(
   } else {
     return false;
   }
-};
+}
