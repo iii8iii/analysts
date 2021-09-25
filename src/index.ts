@@ -1,56 +1,23 @@
 import { trendUp, cross, above } from './utils/helper';
 import { macd, boll, kdj, ma } from './utils/jstock';
 import { klineData } from '@iii8iii/dfcfbot/dist/types';
-import { takeRight, last } from 'lodash';
+import { takeRight } from 'lodash';
 import { fangxiang } from './types';
 
 /**
  * 获取MACD值的变化趋势，可以在trend中设置方向UP或是DOWN
- * 将最近300个单元找到最价比当前最高价稍高的点，根据这些点的前后顺序把序列分割成若干个子序列
- * 求出每个序列的MACD，并判断其趋势
- * 如果最后一个序列（当前）的趋势是向上，则尝试用当前的MACD值去减去临近的趋势相同的上一个序列的MADCD值，如果当前MACD值更大则为上升
- * 其他一切情况都判断为下降
  * @param {klineData} data 传入的数据本身的周期决定了你分析的是哪个周期的MACD趋势
  * @param {fangxiang} [trend='UP']
+ * @param {number} [dp=3] 最终趋势连续最小次数
  * @return {*}  {boolean}
  */
-export function macdTrend(data: klineData, trend: fangxiang = 'UP'): boolean {
-  let { close, high } = data;
+export function macdTrend(data: klineData, trend: fangxiang = 'UP', dp: number = 3): boolean {
+  let { close } = data;
   close = takeRight(close, 300);
-  high = takeRight(high, 300);
+  const { bar } = macd(close, 12, 26, 9);
+  const { isUp, deep } = trendUp(bar);
+  const up = isUp && deep > dp;
 
-  const highNow = last(high) as number;
-  // 获取与当前高点接近，略高于目前高点的点
-  const highEqNow: number[][] = [];
-  high.forEach((h, i) => {
-    const ifHighEqNow = h >= highNow && h - highNow < highNow * 0.0025;
-    if (ifHighEqNow) {
-      highEqNow.push(close.slice(0, i));
-    }
-  });
-
-  // 求出这些点收盘价的macd,其中最后一个是当前的macd(bar)
-  let barTends: { m: number; up: boolean; deep: number }[] = [];
-  highEqNow.forEach(v => {
-    const { bar } = macd(v, 12, 26, 9);
-    const m = Number(last(bar));
-    const { isUp, deep } = trendUp(bar);
-    barTends.push({ m, up: isUp, deep }); //m是对应数组的macd,up是对应的趋势,deep是趋势持续时间
-  });
-
-  // 当前的macd趋势
-  let up = last(barTends)?.up && (last(barTends)?.deep as number) > 3;
-  // 如果当前趋势为上升且获取的同高点多于1个则找出离当前位置最近且趋势也是上升的高点，取出其macd与当前macd比较，如果当前的比较大，则为真否则为假
-  if (up) {
-    if (barTends.length > 1) {
-      for (let i = barTends.length - 2; i > 0; i--) {
-        if (barTends[i].up) {
-          up = barTends[i].m - barTends[barTends.length - 1].m < 0;
-          break;
-        }
-      }
-    }
-  }
   switch (trend) {
     case 'DOWN':
       return !up;
@@ -92,12 +59,13 @@ export function kdjTrend(data: klineData, trend: fangxiang = 'UP'): boolean {
 }
 
 /**
- * 布木线的中间值连线上升大于5个单元并且上下张的开口在扩大则认为会上升
+ * 布林线的中间值连线上升大于5个单元并且上下张的开口在扩大则认为会上升
  * @param {klineData} data
  * @param {fangxiang} [trend='UP']
+ * @param {number} [dp=4] 中线连续上升的次数
  * @return {*}  {boolean}
  */
-export function bollTrend(data: klineData, trend: fangxiang = 'UP'): boolean {
+export function bollTrend(data: klineData, trend: fangxiang = 'UP', dp: number = 4): boolean {
   let { close } = data;
   close = takeRight(close, 300);
   const { mb, up, bn } = boll(close, 20); //{中，高，低}
@@ -110,7 +78,7 @@ export function bollTrend(data: klineData, trend: fangxiang = 'UP'): boolean {
   // 中值大体上就是股票目前的涨势，通过中线来判断目前是否在涨
   const { isUp, deep } = trendUp(mb);
   // 是否在涨而且会继续涨
-  const wilUp = isUp && deep > 4 && isExpand;
+  const wilUp = isUp && deep > dp && isExpand;
   switch (trend) {
     case 'DOWN':
       return !wilUp;
@@ -120,10 +88,10 @@ export function bollTrend(data: klineData, trend: fangxiang = 'UP'): boolean {
 }
 
 /**
- * 以长期无线来判断大体趋势，以忽略价格波动对趋势的判断
- * 默认50个单位（5分钟/日/周/月，取决于传入的数据）均线判断股票是否在上升趋势，且60个单位内最低价位于无线上方
+ * 用于长周期MA做趋势分析，要求MA趋势向上，并且aboveZq内最低价不得穿过无线
  * @param {klineData} data
- * @param {number} [zq=50]
+ * @param {number} [mazq=50]
+ * @param {number} [aboveZq=9]
  * @return {*}  {boolean}
  */
 export function maTrendUp(
@@ -142,4 +110,4 @@ export function maTrendUp(
   } else {
     return false;
   }
-}
+};
