@@ -14,7 +14,7 @@ import { fangxiang } from './types';
 export function macdTrend(
   data: klineData,
   trend: fangxiang = 'UP',
-  dp: number = 3
+  dp: number = 0
 ): boolean {
   let { close } = data;
   close = takeRight(close, 300);
@@ -72,7 +72,7 @@ export function kdjTrend(data: klineData, trend: fangxiang = 'UP'): boolean {
 export function bollTrend(
   data: klineData,
   trend: fangxiang = 'UP',
-  dp: number = 4
+  dp: number = 0
 ): boolean {
   let { close } = data;
   close = takeRight(close, 300);
