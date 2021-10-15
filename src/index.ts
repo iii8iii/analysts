@@ -45,7 +45,7 @@ export function kdjTrend(data: klineData, trend: fangxiang = 'UP'): boolean {
   const { k, d, j } = kdj(close, high, low, 9);
   const df = cross(j, d, false);
   const gf = cross(j, d, true);
-  const jUp = trendUp(j).isUp;
+  const jUp = trendUp(j, 0).isUp;
   const jDeep = trendUp(j).deep;
   const kUp = trendUp(k).isUp;
 

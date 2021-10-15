@@ -5,7 +5,7 @@ import { map, takeRight, last } from 'lodash';
  * @param {number} number 要处理的数据
  * @param {number} num 小数位数
  */
-const qxs = (number: number, num: number) =>
+export const qxs = (number: number, num: number) =>
   Number(String(number).replace(new RegExp(`^(.*\\..{${num}}).*$`), '$1'));
 
 /**
@@ -16,7 +16,7 @@ const qxs = (number: number, num: number) =>
  */
 export function trendUp(
   arr: number[],
-  xs = 3
+  xs = 2
 ): { isUp: boolean; deep: number } {
   arr = map(arr, o => qxs(o, xs));
 
