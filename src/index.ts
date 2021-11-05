@@ -14,19 +14,19 @@ import { fangxiang } from './types';
 export function macdTrend(
   data: klineData,
   trend: fangxiang = 'UP',
-  dp: number = 0
+  dp: number = 1
 ): boolean {
   let { close } = data;
   close = takeRight(close, 300);
   const { bar } = macd(close, 12, 26, 9);
   const { isUp, deep } = trendUp(bar);
-  const up = isUp && deep > dp;
+  const up = isUp && deep >= dp;
 
   switch (trend) {
     case 'DOWN':
       return !up;
     default:
-      return !!up;
+      return up;
   }
 }
 
@@ -45,15 +45,14 @@ export function kdjTrend(data: klineData, trend: fangxiang = 'UP'): boolean {
   const { k, d, j } = kdj(close, high, low, 9);
   const df = cross(j, d, false);
   const gf = cross(j, d, true);
-  const jUp = trendUp(j, 0).isUp;
+  const jUp = trendUp(j).isUp;
   const jDeep = trendUp(j).deep;
   const kUp = trendUp(k).isUp;
 
   //死叉之后K线和J线都表现为向上或金叉后到J线向下之前
   const up = (gf && jUp && jDeep < 5) || (df && kUp && jUp);
   //金叉后J线开始向下或死叉后J线未向上
-  const down = (df && !jUp) || (gf && !jUp);
-
+  const down = !jUp;
   switch (trend) {
     case 'DOWN':
       return down;
@@ -72,7 +71,7 @@ export function kdjTrend(data: klineData, trend: fangxiang = 'UP'): boolean {
 export function bollTrend(
   data: klineData,
   trend: fangxiang = 'UP',
-  dp: number = 0
+  dp: number = 2
 ): boolean {
   let { close } = data;
   close = takeRight(close, 300);
@@ -86,7 +85,7 @@ export function bollTrend(
   // 中值大体上就是股票目前的涨势，通过中线来判断目前是否在涨
   const { isUp, deep } = trendUp(mb);
   // 是否在涨而且会继续涨
-  const wilUp = isUp && deep > dp && isExpand;
+  const wilUp = isUp && deep >= dp && isExpand;
   switch (trend) {
     case 'DOWN':
       return !wilUp;
@@ -118,4 +117,27 @@ export function maTrendUp(
   } else {
     return false;
   }
+}
+
+export function threeHigh(data: klineData): boolean {
+  let { high, low, close } = data;
+  high = takeRight(high, 4);
+  low = takeRight(low, 4);
+  close = takeRight(close, 4);
+  const { isUp, deep } = trendUp(high);
+  if (isUp && deep >= 3) {
+    const { isUp, deep } = trendUp(low);
+    if (isUp && deep >= 3) {
+      const { isUp, deep } = trendUp(close);
+      if (isUp && deep >= 3) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+export function suoliang(data: klineData): boolean {
+  const { cjl } = data;
+  return !trendUp(cjl).isUp;
 }
