@@ -47,7 +47,7 @@
   ],
   "devDependencies": {
     "@iii8iii/dfcfbot": "^0.5.4",
-    "@size-limit/preset-small-lib": "^4.5.5",
+    "@size-limit/preset-small-lib": "^6.0.4",
     "husky": "^7.0.1",
     "size-limit": "^5.0.2",
     "tsdx": "^0.14.1",

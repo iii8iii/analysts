@@ -152,5 +152,3 @@ export function suoliang(data: klineData): boolean {
   const maCjl = ma(cjl, 5);
   return !trendUp(maCjl).isUp;
 }
-
-
