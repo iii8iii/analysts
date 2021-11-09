@@ -119,6 +119,11 @@ export function maTrendUp(
   }
 }
 
+/**
+ * 三高，更高的高点，低点，收盘
+ * @param {klineData} data
+ * @return {*}  {boolean}
+ */
 export function threeHigh(data: klineData): boolean {
   let { high, low, close } = data;
   high = takeRight(high, 4);
@@ -137,7 +142,15 @@ export function threeHigh(data: klineData): boolean {
   return false;
 }
 
+/**
+ * 缩量，判断成交量趋势
+ * @param {klineData} data
+ * @return {*}  {boolean}
+ */
 export function suoliang(data: klineData): boolean {
   const { cjl } = data;
-  return !trendUp(cjl).isUp;
+  const maCjl = ma(cjl, 5);
+  return !trendUp(maCjl).isUp;
 }
+
+
