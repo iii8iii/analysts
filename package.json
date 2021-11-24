@@ -46,7 +46,6 @@
     }
   ],
   "devDependencies": {
-    "@iii8iii/dfcfbot": "^0.5.4",
     "@size-limit/preset-small-lib": "^6.0.4",
     "husky": "^7.0.1",
     "size-limit": "^5.0.2",
@@ -55,6 +54,7 @@
     "typescript": "^3.9.10"
   },
   "dependencies": {
+    "@iii8iii/dfcfbot": "^1.0.6",
     "@types/lodash": "^4.14.172",
     "lodash": "^4.17.21",
     "lodash-es": "^4.17.21"
