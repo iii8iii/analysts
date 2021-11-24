@@ -152,3 +152,31 @@ export function suoliang(data: klineData): boolean {
   const maCjl = ma(cjl, 5);
   return !trendUp(maCjl).isUp;
 }
+
+/**
+ * 高开，当日开盘价高于上一交易日收盘价
+ * @param {klineData} data
+ * @return {*} {boolean}
+ */
+export function highOpen(data: klineData): boolean {
+  const { open, close } = data;
+  const todayOpen = takeRight(open, 1)[0];
+  const lastClose = takeRight(close, 2)[0];
+  return todayOpen > lastClose;
+}
+
+/**
+ * 收高，收于最低和最价之间二分之一以上
+ * @param {klineData} data
+ * @param {number} [dayFromToday=1]
+ * @return {*} {boolean}
+ */
+export function highClose(data: klineData, dayFromToday: number = 1): boolean {
+  const { high, low, close } = data;
+  const h = takeRight(high, dayFromToday)[0];
+  const l = takeRight(low, dayFromToday)[0];
+  const c = takeRight(close, dayFromToday)[0];
+  const h2c = Math.abs(h - c);
+  const h2l = Math.abs(h - l);
+  return h2c < h2l / 2.15;
+}
