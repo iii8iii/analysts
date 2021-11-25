@@ -165,7 +165,6 @@ export function highOpen(data: klineData): boolean {
   return todayOpen > lastClose;
 }
 
-
 /**
  * 收高，最高与收盘之间的距离小于最高到最低之间距离的一半
  * @param {klineData} data
@@ -173,7 +172,11 @@ export function highOpen(data: klineData): boolean {
  * @param {number} [dayFromToday=1]
  * @return {*}  {boolean}
  */
-export function highClose(data: klineData, fazhi: number = 2.15, dayFromToday: number = 1): boolean {
+export function highClose(
+  data: klineData,
+  fazhi: number = 2.15,
+  dayFromToday: number = 1
+): boolean {
   const { high, low, close } = data;
   const h = takeRight(high, dayFromToday)[0];
   const l = takeRight(low, dayFromToday)[0];
