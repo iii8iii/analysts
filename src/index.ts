@@ -165,18 +165,20 @@ export function highOpen(data: klineData): boolean {
   return todayOpen > lastClose;
 }
 
+
 /**
- * 收高，收于最低和最价之间二分之一以上
+ * 收高，最高与收盘之间的距离小于最高到最低之间距离的一半
  * @param {klineData} data
+ * @param {number} [fazhi=2.15] 用于调节比例，如3则最高到收盘的距离是最高到最低距离的三分之一，数字越大表示收盘越接近最高点
  * @param {number} [dayFromToday=1]
- * @return {*} {boolean}
+ * @return {*}  {boolean}
  */
-export function highClose(data: klineData, dayFromToday: number = 1): boolean {
+export function highClose(data: klineData, fazhi: number = 2.15, dayFromToday: number = 1): boolean {
   const { high, low, close } = data;
   const h = takeRight(high, dayFromToday)[0];
   const l = takeRight(low, dayFromToday)[0];
   const c = takeRight(close, dayFromToday)[0];
   const h2c = Math.abs(h - c);
   const h2l = Math.abs(h - l);
-  return h2c < h2l / 2.15;
+  return h2c < h2l / fazhi;
 }
