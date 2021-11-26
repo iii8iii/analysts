@@ -183,5 +183,5 @@ export function highClose(
   const c = takeRight(close, dayFromToday)[0];
   const h2c = Math.abs(h - c);
   const h2l = Math.abs(h - l);
-  return h2c < h2l / fazhi;
+  return h2c <= h2l / fazhi;
 }
