@@ -186,11 +186,23 @@ export function highClose(
   return h2c <= h2l / fazhi;
 }
 
-export function ljxt(data: klineData, dayFromToday = 1) {
+/**
+ * 量价协同
+ * 价格趋势与成交量变化趋势相同,价升量增或价降量减，特殊情况：价升量缩，但是连续缩量小于3次
+ * @param {klineData} data
+ * @param {number} [dayFromToday=1]
+ * @return {*}  {boolean}
+ */
+
+export function ljxt(data: klineData, dayFromToday = 1): boolean {
   const { close, cjl } = data;
-  const maClose = ma(dropRight(close, dayFromToday), 5);
-  const maCjl = ma(dropRight(cjl, dayFromToday), 5);
+  const maClose = ma(dropRight(close, dayFromToday), 3);
+  const maCjl = ma(dropRight(cjl, dayFromToday), 3);
   const { isUp: closeUp } = trendUp(maClose);
-  const { isUp: cjlUp } = trendUp(maCjl);
+  const { isUp: cjlUp, deep } = trendUp(maCjl);
+
+  if (closeUp && !cjlUp && deep < 3) {
+    return true;
+  }
   return closeUp === cjlUp;
 }
