@@ -1,7 +1,7 @@
 import { trendUp, cross, above } from './utils/helper';
 import { macd, boll, kdj, ma } from './utils/jstock';
 import { klineData } from '@iii8iii/dfcfbot/dist/types';
-import { takeRight } from 'lodash';
+import { takeRight, dropRight } from 'lodash';
 import { fangxiang } from './types';
 
 /**
@@ -186,10 +186,10 @@ export function highClose(
   return h2c <= h2l / fazhi;
 }
 
-export function ljxt(data: klineData) {
+export function ljxt(data: klineData, dayFromToday = 1) {
   const { close, cjl } = data;
-  const maClose = ma(close, 5);
-  const maCjl = ma(cjl, 5);
+  const maClose = ma(dropRight(close, dayFromToday), 5);
+  const maCjl = ma(dropRight(cjl, dayFromToday), 5);
   const { isUp: closeUp } = trendUp(maClose);
   const { isUp: cjlUp } = trendUp(maCjl);
   return closeUp === cjlUp;
