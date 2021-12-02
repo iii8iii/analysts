@@ -185,3 +185,12 @@ export function highClose(
   const h2l = Math.abs(h - l);
   return h2c <= h2l / fazhi;
 }
+
+export function ljxt(data: klineData) {
+  const { close, cjl } = data;
+  const maClose = ma(close, 5);
+  const maCjl = ma(cjl, 5);
+  const { isUp: closeUp } = trendUp(maClose);
+  const { isUp: cjlUp } = trendUp(maCjl);
+  return closeUp === cjlUp;
+}
