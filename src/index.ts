@@ -195,14 +195,19 @@ export function highClose(
  */
 
 export function ljxt(data: klineData, dayFromToday = 1): boolean {
-  const { close, cjl } = data;
-  const maClose = ma(dropRight(close, dayFromToday), 3);
-  const maCjl = ma(dropRight(cjl, dayFromToday), 3);
-  const { isUp: closeUp } = trendUp(maClose);
-  const { isUp: cjlUp, deep } = trendUp(maCjl);
+  let { close, cjl } = data;
+  close = dropRight(close, dayFromToday);
+  cjl = dropRight(cjl, dayFromToday);
 
-  if (closeUp && !cjlUp && deep < 3) {
-    return true;
+  const cls15 = takeRight(close, 15);
+  const cjl15 = takeRight(cjl, 15);
+  let t = 0;
+  for (let i = 0; i < 14; i++) {
+    const a = cls15[i] >= cls15[i + 1];
+    const b = cjl15[i] >= cjl15[i + 1];
+    if (a === b) {
+      t++;
+    }
   }
-  return closeUp === cjlUp;
+  return t / 14 >= 0.8;
 }
